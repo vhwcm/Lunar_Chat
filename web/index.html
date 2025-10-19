@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de Setup Inicial -->
+    <div id="setup-screen" class="screen active">
+        <div class="container">
+            <div class="lunar-logo">
+                <svg width="60" height="60" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="url(#gradient)" stroke-width="3"/>
+                    <circle cx="50" cy="50" r="30" fill="url(#gradient)" opacity="0.3"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#7aa2f7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#bb9af7;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1 class="title">Lunar Chat</h1>
+            <p class="subtitle">Sistema de mensagens em tempo real</p>
+            
+            <div class="form-group">
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" placeholder="Digite seu apelido..." autocomplete="off">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="create-room-btn">
+                    <span class="btn-icon">+</span>
+                    Criar Sala
+                </button>
+                <button class="btn btn-secondary" id="join-room-btn">
+                    <span class="btn-icon">→</span>
+                    Entrar na Sala
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Código da Sala -->
+    <div id="room-code-screen" class="screen">
+        <div class="container">
+            <div class="lunar-logo small">
+                <svg width="40" height="40" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="url(#gradient2)" stroke-width="3"/>
+                    <circle cx="50" cy="50" r="30" fill="url(#gradient2)" opacity="0.3"/>
+                    <defs>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#7aa2f7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#bb9af7;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h2 class="title small">Entrar na Sala</h2>
+            
+            <div class="form-group">
+                <label for="room-code">Código da Sala</label>
+                <input type="text" id="room-code" placeholder="Digite o código..." autocomplete="off">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="join-btn">Entrar</button>
+                <button class="btn btn-ghost" id="back-btn">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela do Chat -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-container">
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="status-indicator"></div>
+                    <div>
+                        <h3 class="room-name">Sala: <span id="room-display">-</span></h3>
+                        <p class="user-name" id="user-display">-</p>
+                    </div>
+                </div>
+                <button class="btn btn-ghost btn-icon-only" id="leave-btn" title="Sair">
+                    <span>✕</span>
+                </button>
+            </div>
+
+            <!-- Mensagens -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-message">
+                    <p>Bem-vindo ao Lunar Chat 🌙</p>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="chat-input">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Digite sua mensagem..." 
+                    autocomplete="off"
+                >
+                <button class="btn btn-primary btn-send" id="send-btn">
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
