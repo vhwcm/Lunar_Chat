@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar Chat - A new experience</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-aurora"></div>
+
+    <main class="main-container">
+        <!-- Screen 1: Initial Setup (Username) -->
+        <section id="setup-screen" class="screen active">
+            <div class="glass-card">
+                <div class="card-header">
+                    <img src="https://raw.githubusercontent.com/vhwcm/Lunar_Chat/master/web/logo.svg" alt="Lunar Chat Logo" class="logo">
+                    <h1>Welcome to Lunar Chat</h1>
+                    <p>A new way to communicate.</p>
+                </div>
+                <form id="setup-form" class="card-body">
+                    <div class="input-group">
+                        <label for="username">How should we call you?</label>
+                        <input type="text" id="username" placeholder="Your username" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Continue</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Screen 2: Join or Create Room -->
+        <section id="room-screen" class="screen">
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2 id="welcome-message">Hello, !</h2>
+                    <p>Join a public room or create your own.</p>
+                </div>
+                <div class="card-body room-options">
+                    <!-- Public Rooms List -->
+                    <div class="public-rooms-container">
+                        <h3>Public Rooms</h3>
+                        <div id="public-rooms-list" class="public-rooms-list">
+                            <!-- Public rooms will be dynamically inserted here -->
+                            <p class="no-rooms-message">No public rooms available right now. Why not create one?</p>
+                        </div>
+                    </div>
+
+                    <div class="divider">or</div>
+
+                    <!-- Action Buttons -->
+                    <div class="room-actions">
+                        <button id="show-create-room-btn" class="btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path></svg>
+                            Create New Room
+                        </button>
+                        <form id="join-form">
+                            <label for="room-code">Join by code</label>
+                            <div class="join-input-group">
+                                <input type="text" id="room-code" placeholder="10-digit code" required>
+                                <button type="submit" class="btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 17l5-5-5-5v10z"></path></svg>
+                                    Join
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 3: Create Room Configuration -->
+        <section id="create-room-screen" class="screen">
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2>Create a Room</h2>
+                    <p>Customize your new chat space.</p>
+                </div>
+                <form id="create-room-form" class="card-body">
+                    <div class="input-group">
+                        <label for="new-room-name">Room Name (optional)</label>
+                        <input type="text" id="new-room-name" placeholder="e.g., Cosmic Nebula">
+                    </div>
+                    <div class="switch-group">
+                        <label for="is-public-switch">Public Room</label>
+                        <label class="switch">
+                            <input type="checkbox" id="is-public-switch" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-create-btn" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Create & Join</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Screen 4: Main Chat -->
+        <section id="chat-screen" class="screen">
+            <div class="chat-container glass-card">
+                <header class="chat-header">
+                    <div>
+                        <h3><span id="chat-room-name">Room Name</span></h3>
+                        <small>Code: <span id="chat-room-code"></span></small>
+                    </div>
+                    <button id="leave-room-btn" class="btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                        <span>Leave</span>
+                    </button>
+                </header>
+                <div id="chat-messages" class="chat-messages">
+                    <!-- Messages will be inserted here -->
+                </div>
+                <footer class="chat-footer">
+                    <form id="message-form" class="message-form">
+                        <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off" required>
+                        <button type="submit" class="btn-send">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        </button>
+                    </form>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
