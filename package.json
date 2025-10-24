@@ -1,0 +1,26 @@
+{
+  "name": "lunar-chat",
+  "version": "1.0.0",
+  "description": "A real-time chat application with terminal and web interfaces",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "client": "node client.js"
+  },
+  "keywords": [
+    "chat",
+    "websocket",
+    "socketio",
+    "terminal",
+    "blessed"
+  ],
+  "author": "vhwcm",
+  "license": "MIT",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1"
+  }
+}

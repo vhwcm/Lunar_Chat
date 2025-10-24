@@ -11,12 +11,11 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-// Serve static files from the web folder
 app.use(express.static(join(__dirname, 'web')));
 
-const publicRooms = new Map(); // roomCode -> { name, userCount }
+const publicRooms = new Map();
 
-// --- Room Name Generation ---
+
 const adjectives = ["Swift", "Silent", "Cosmic", "Lunar", "Solar", "Starry", "Magic", "Golden", "Crystal", "Whispering"];
 const nouns = ["Nebula", "Galaxy", "Comet", "Starship", "Odyssey", "Sanctuary", "Oasis", "Citadel", "Haven", "Rift"];
 
@@ -25,12 +24,15 @@ function generateRoomName() {
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     return `${adj} ${noun}`;
 }
-// --------------------------
+
 
 io.on("connection", (socket) => {
-    console.log("✅ User connected:", socket.id);
-    // Send the initial list of public rooms to the newly connected client
+    console.log("User connected:", socket.id);
     socket.emit('publicRoomsUpdate', Array.from(publicRooms.values()));
+
+    socket.on("getPublicRooms", () => {
+        socket.emit('publicRoomsUpdate', Array.from(publicRooms.values()));
+    });
 
     socket.on("createRoom", async ({ roomCode, roomName, isPublic, user }) => {
         const finalRoomName = roomName || generateRoomName();
@@ -46,7 +48,6 @@ io.on("connection", (socket) => {
                 userCount: 1
             };
             publicRooms.set(roomCode, roomData);
-            // Broadcast the updated list of public rooms to all clients
             io.emit('publicRoomsUpdate', Array.from(publicRooms.values()));
         }
 
@@ -65,7 +66,6 @@ io.on("connection", (socket) => {
         socket.data.user = user;
         socket.data.room = roomCode;
 
-        // Update user count for public rooms
         if (publicRooms.has(roomCode)) {
             const roomData = publicRooms.get(roomCode);
             roomData.userCount = existingRoom.size;
@@ -83,7 +83,24 @@ io.on("connection", (socket) => {
         console.log(`[ROOM] ${user} leaving room ${room}`);
         socket.to(room).emit("system", { message: `${user} has left the room.` });
         
-        // Update or remove the room from public list
+        if (publicRooms.has(room)) {
+            const roomData = publicRooms.get(room);
+            const roomAdapter = io.sockets.adapter.rooms.get(room);
+            if (!roomAdapter || roomAdapter.size === 0) {
+                publicRooms.delete(room);
+            } else {
+                roomData.userCount = roomAdapter.size;
+                publicRooms.set(room, roomData);
+            }
+            io.emit('publicRoomsUpdate', Array.from(publicRooms.values()));
+        }
+    });
+
+    socket.on("leaveRoom", ({ room, user }) => {
+        socket.leave(room);
+        console.log(`[ROOM] ${user} leaving room ${room}`);
+        socket.to(room).emit("system", { message: `${user} has left the room.` });
+        
         if (publicRooms.has(room)) {
             const roomData = publicRooms.get(room);
             const roomAdapter = io.sockets.adapter.rooms.get(room);
@@ -103,13 +120,11 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("❌ User disconnected:", socket.id);
+        console.log("User disconnected:", socket.id);
         const roomCode = socket.data.room;
-        // Notify the room that the user has disconnected
         if (socket.data.user && roomCode) {
             socket.to(roomCode).emit("system", { message: `${socket.data.user} has disconnected.` });
 
-            // Update or remove the room from public list on disconnect
             if (publicRooms.has(roomCode)) {
                 const roomAdapter = io.sockets.adapter.rooms.get(roomCode);
                 if (!roomAdapter || roomAdapter.size === 0) {
