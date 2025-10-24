@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- STATE ---
     let socket;
     let currentUser = '';
     let currentRoom = '';
     let currentRoomName = '';
 
-    // --- DOM ELEMENTS ---
     const screens = {
         setup: document.getElementById('setup-screen'),
         room: document.getElementById('room-screen'),
@@ -34,11 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageForm = document.getElementById('message-form');
     const messageInput = document.getElementById('message-input');
 
-    // --- FUNCTIONS ---
-
-    /**
-     * Initializes Socket.IO connection and sets up event listeners.
-     */
     function initSocket() {
         socket = io({ autoConnect: false });
 
@@ -85,35 +78,22 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.connect();
     }
 
-    /**
-     * Switches the visible screen.
-     * @param {string} screenName - The name of the screen to show.
-     */
     function showScreen(screenName) {
         Object.values(screens).forEach(screen => screen.classList.remove('active'));
         screens[screenName].classList.add('active');
         
-        // Focus appropriate input
         if (screenName === 'setup') usernameInput.focus();
         if (screenName === 'room') roomCodeInput.focus();
         if (screenName === 'createRoom') newRoomNameInput.focus();
         if (screenName === 'chat') messageInput.focus();
     }
 
-    /**
-     * Generates a 10-digit room code.
-     * @returns {string}
-     */
     function generateCode() {
         return (Math.floor(Math.random() * 9_000_000_000) + 1_000_000_000).toString();
     }
 
-    /**
-     * Updates the list of public rooms on the UI.
-     * @param {Array} rooms - Array of public room objects.
-     */
     function updatePublicRoomsList(rooms) {
-        publicRoomsList.innerHTML = ''; // Clear existing list
+        publicRoomsList.innerHTML = ''; 
         if (rooms.length === 0) {
             publicRoomsList.innerHTML = '<p class="no-rooms-message">No public rooms available. Create one!</p>';
             return;
@@ -122,9 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
         rooms.forEach(room => {
             const roomEl = document.createElement('div');
             roomEl.classList.add('public-room-item');
+            
+            const displayName = room.name.length > 30 
+                ? room.name.substring(0, 30) + '...' 
+                : room.name;
+            
             roomEl.innerHTML = `
                 <div class="room-info">
-                    <span class="room-name">${room.name}</span>
+                    <span class="room-name" title="${room.name}">${displayName}</span>
                     <span class="room-code">#${room.code}</span>
                 </div>
                 <div class="room-meta">
@@ -139,12 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /**
-     * Adds a message to the chat interface.
-     * @param {string} user - The user who sent the message.
-     * @param {string} text - The message content.
-     * @param {boolean} isOwn - True if the message is from the current user.
-     */
     function addMessage(user, text, isOwn) {
         const messageEl = document.createElement('div');
         messageEl.classList.add('message', isOwn ? 'user-message' : 'other-message');
@@ -164,10 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    /**
-     * Adds a system message to the chat interface.
-     * @param {string} text - The system message content.
-     */
     function addSystemMessage(text) {
         const messageEl = document.createElement('div');
         messageEl.classList.add('message', 'system-message');
@@ -175,8 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.appendChild(messageEl);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-
-    // --- EVENT HANDLERS ---
 
     setupForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -231,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
     leaveRoomBtn.addEventListener('click', () => {
         if (socket) {
             socket.emit('leave', { room: currentRoom, user: currentUser });
-            // We don't disconnect, just go back to the room selection screen
         }
         currentRoom = '';
         currentRoomName = '';
@@ -240,6 +212,5 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen('room');
     });
 
-    // --- INITIALIZATION ---
     showScreen('setup');
 });
