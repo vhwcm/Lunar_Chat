@@ -1,7 +1,7 @@
 {
   "name": "lunar-chat",
   "version": "1.0.0",
-  "description": "A real-time chat application with terminal and web interfaces",
+  "description": "Web Chat with Socket IO",
   "type": "module",
   "main": "server.js",
   "scripts": {
